@@ -1,18 +1,30 @@
 <?php
 include('db.php');
 
-if(!empty($_GET['action']) && ($_GET['action'] == 'showImg') && !empty($_GET['id']) && ($_GET['feed'] != 'addFeedback')) {
+if(!empty($_GET['action']) && ($_GET['action'] == 'showImg') && !empty($_GET['id'])) {
     $idImg = $_GET['id'];
-    $sqlUpdate = "UPDATE images SET count = count + 1 WHERE id = " . $idImg;
-    mysqli_query($link, $sqlUpdate);
+    if($_GET['add'] == 'count'){
+        $sqlUpdate = "UPDATE images SET count = count + 1 WHERE id = " . $idImg;
+        mysqli_query($link, $sqlUpdate);
+    }
     $sql = "SELECT fullSrc, count FROM images WHERE id = " . $idImg;
     $res = mysqli_query($link, $sql);
     $row = mysqli_fetch_assoc($res);
     $src = $row['fullSrc'];
     $count = $row['count'];
+    $sql = "SELECT name, feedback FROM feedback WHERE id_image = " . $idImg;
+    $res = mysqli_query($link, $sql);
+    $contentFeedback = '';
+        while ($row = mysqli_fetch_assoc($res)){
+            $contentFeedback .= '
+        <div class="feedback">
+            <div class=\"user_name\">'.$row['name'].'</div>
+            <div class=\"user_feedback\">'.$row['feedback'].'</div>
+        </div>';
+        }
 }
 
-if(!empty($_GET['feed'])){
+if($_GET['add'] == 'addFeedback'){
     $name = $_POST['name'];
     $feedback = $_POST['feedback'];
     $idImg = $_GET['id'];
@@ -31,6 +43,12 @@ if(!empty($_GET['feed'])){
         img{
             width: 500px;
         }
+        .feedback{
+            display: flex;
+        }
+        .user_name{
+            margin-right: 15px;
+        }
     </style>
 </head>
 <body>
@@ -41,10 +59,10 @@ if(!empty($_GET['feed'])){
         }
     ?>
     </div>
-
-
+    <h2>Отзывы:</h2>
+        <?=$contentFeedback;?>
     <h2>Оставьте отзыв</h2>
-    <form action="image.php?action=showImg&id=<?=$idImg?>&feed=addFeedback" method="post">
+    <form action="image.php?action=showImg&id=<?=$idImg?>&add=addFeedback" method="post">
         <label>Введите имя:</label><br>
         <input type="text" name="name" placeholder="Имя"><br>
         <label>Введите отзыв:</label><br>

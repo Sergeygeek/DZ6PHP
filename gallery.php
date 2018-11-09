@@ -25,7 +25,7 @@ include('db.php');
         while ($row = mysqli_fetch_assoc($res)):
             ?>
         <div class="img">
-            <a href="image.php?action=showImg&id=<?=$row['id']?>" target='_blank'>
+            <a href="image.php?action=showImg&id=<?=$row['id']?>&add=count" target='_blank'>
                 <img src="<?=$row['minSrc']?>" data-full_image_url="<?=$row['fullSrc']?>" alt="<?=$row['alt']?>"><br>
             </a>
             <span>Просмотрено: <?=$row['count']?></span>
